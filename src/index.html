@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Group Creator</title>
+
+    <link rel="stylesheet" href="styles.css" />
+    <script type="text/javascript" src="index.js" defer></script>
+  </head>
+  <body>
+    <header class="header">
+      <h1>Group By Age</h1>
+    </header>
+    <main class="main">
+      <section id="fileSelectContainer" class="container file-select-container">
+        <h3 class="section-name">CSV File Selection</h3>
+        <input type="file" id="inputFileSelector" name="selectedFile" />
+      </section>
+      <section id="generatorContainer" class="container generator-container">
+        <h3>Groups</h3>
+        <button id="buttonBackToFileSelect">Back to File Select</button>
+        <input type="number" id="inputNumGroups" name="numGroups" placeholder="Enter number of groups" />
+        <button id="buttonGenerateGroups">Generate</button>
+        <div id="groups"></div>
+      </section>
+    </main>
+  </body>
+</html>
