@@ -26,7 +26,8 @@ const state = {
   groups: {
     total: null,
     value: []
-  }
+  },
+  isShowingAge: false
 };
 
 /**
@@ -44,7 +45,10 @@ function start() {
   buttonBackToFileSelect.addEventListener('click', onBackToFileSelect);
 
   const buttonGenerateGroups = document.getElementById('buttonGenerateGroups');
-  buttonGenerateGroups.addEventListener('click', generateGroups);
+  buttonGenerateGroups.addEventListener('click', onGenerateGroupsClick);
+
+  const inputIsShowingAge = document.getElementById('inputIsShowingAge');
+  inputIsShowingAge.addEventListener('change', toggleIsShowingAge);
 
   sequence = createViewSequence('.content', ['fileSelectContainer', 'generatorContainer']);
 }
@@ -84,6 +88,11 @@ function createViewSequence(target, ids = []) {
     next,
     prev
   };
+}
+
+function toggleIsShowingAge() {
+  state.isShowingAge = !state.isShowingAge;
+  renderGroups();
 }
 
 function onFileChange(event) {
@@ -141,13 +150,7 @@ function empty(element) {
   }
 }
 
-let nextGroupNumber = 1;
 function generateGroups() {
-  const divGroups = document.getElementById('groups');
-  empty(divGroups);
-
-  nextGroupNumber = 1;
-
   state.groups.value = [];
   for (let i = 0; i < state.groups.total; ++i) {
     state.groups.value.push([]);
@@ -161,13 +164,23 @@ function generateGroups() {
     rows.splice(index, 1);
     gi = gi + 1 === state.groups.total ? 0 : gi + 1;
   }
+}
 
-  console.log(state);
+let nextGroupNumber = 1;
+function renderGroups() {
+  nextGroupNumber = 1;
+  const divGroups = document.getElementById('groups');
+  empty(divGroups);
 
   state.groups.value.forEach(group => {
     const divGroup = createGroup(group);
     divGroups.append(divGroup);
   });
+}
+
+function onGenerateGroupsClick() {
+  generateGroups();
+  renderGroups();
 }
 
 function createGroup(group) {
@@ -176,11 +189,11 @@ function createGroup(group) {
 
   const tr = document.createElement('tr');
   Object.values(state.csv.header).forEach(val => {
-    if (val.name !== 'Notes') {
-      const th = document.createElement('th');
-      th.append(val.name);
-      tr.append(th);
-    }
+    if (val.prop === 'age' && !state.isShowingAge) return;
+    if (val.prop === 'notes') return;
+    const th = document.createElement('th');
+    th.append(val.name);
+    tr.append(th);
   });
 
   thead.append(tr);
@@ -209,12 +222,12 @@ function createGroup(group) {
 
 function createGroupMember(member) {
   const tr = document.createElement('tr');
-  Object.values(member).forEach((val, i, a) => {
-    if (i !== a.length - 1) {
-      const td = document.createElement('td');
-      td.append(val);
-      tr.append(td);
-    }
+  Object.entries(member).forEach(([key, value]) => {
+    if (key === 'age' && !state.isShowingAge) return;
+    if (key === 'notes') return;
+    const td = document.createElement('td');
+    td.append(value);
+    tr.append(td);
   });
   return tr;
 }

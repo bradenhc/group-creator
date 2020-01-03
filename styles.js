@@ -66,7 +66,7 @@ style(
   `
   display: flex;
   flex-direction: row;
-  align-items; center;
+  align-content: center;
 
   * {
     margin: 10px;
