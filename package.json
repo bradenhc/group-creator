@@ -1,0 +1,22 @@
+{
+  "name": "group-creator",
+  "version": "0.1.0",
+  "description": "Allows random generation of groups based on a column as imported from a CSV file.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bradenhc/group-creator.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bradenhc/group-creator/issues"
+  },
+  "homepage": "https://github.com/bradenhc/group-creator#readme",
+  "devDependencies": {
+    "stylis": "^3.5.4"
+  }
+}

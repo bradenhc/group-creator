@@ -34,8 +34,6 @@ const state = {
  * in the browser. If the API is detected, then the applicatio will be started via this function.
  */
 function start() {
-  sequence = createViewSequence(['fileSelectContainer', 'generatorContainer']);
-
   const inputFileSelector = document.getElementById('inputFileSelector');
   inputFileSelector.addEventListener('change', onFileChange);
 
@@ -47,49 +45,45 @@ function start() {
 
   const buttonGenerateGroups = document.getElementById('buttonGenerateGroups');
   buttonGenerateGroups.addEventListener('click', generateGroups);
+
+  sequence = createViewSequence('.content', ['fileSelectContainer', 'generatorContainer']);
 }
 
-function createViewSequence(ids = [], showing) {
+function createViewSequence(target, ids = []) {
+  const parent = typeof target === 'string' ? document.querySelector(target) : target;
   let views = ids.map(_init);
-  const startIndex = showing ? showing : 0;
-  const current = {
-    index: startIndex,
-    view: views[startIndex]
-  };
+  let index = 0;
+  let current = views[index];
 
   function _init(id) {
-    const element = document.getElementById(id);
-    const view = { id, element, display: element.style.display || 'block' };
-    element.style.display = 'none';
+    const view = document.getElementById(id);
+    parent.removeChild(view);
     return view;
   }
 
   function _advance(direction) {
-    current.view.element.style.display = 'none';
-    current.index += direction;
-    current.view = views[current.index];
-    current.view.element.style.display = current.view.display;
+    parent.removeChild(current);
+    index = index += direction;
+    current = views[index];
+    parent.append(current);
   }
 
   function next() {
-    if (current.index + 1 >= views.length) return;
+    if (index + 1 >= views.length) return;
     _advance(1);
   }
 
   function prev() {
-    if (current.index - 1 < 0) return;
+    if (index - 1 < 0) return;
     _advance(-1);
   }
 
-  current.view.element.style.display = current.view.display;
+  parent.append(current);
 
-  return Object.assign(
-    {},
-    {
-      next,
-      prev
-    }
-  );
+  return {
+    next,
+    prev
+  };
 }
 
 function onFileChange(event) {
@@ -182,9 +176,11 @@ function createGroup(group) {
 
   const tr = document.createElement('tr');
   Object.values(state.csv.header).forEach(val => {
-    const th = document.createElement('th');
-    th.append(val.name);
-    tr.append(th);
+    if (val.name !== 'Notes') {
+      const th = document.createElement('th');
+      th.append(val.name);
+      tr.append(th);
+    }
   });
 
   thead.append(tr);
@@ -199,6 +195,7 @@ function createGroup(group) {
   table.append(tbody);
 
   const div = document.createElement('div');
+  div.className = 'group';
 
   const h4 = document.createElement('h4');
   h4.append('Group ' + nextGroupNumber);
@@ -212,10 +209,12 @@ function createGroup(group) {
 
 function createGroupMember(member) {
   const tr = document.createElement('tr');
-  Object.values(member).forEach(val => {
-    const td = document.createElement('td');
-    td.append(val);
-    tr.append(td);
+  Object.values(member).forEach((val, i, a) => {
+    if (i !== a.length - 1) {
+      const td = document.createElement('td');
+      td.append(val);
+      tr.append(td);
+    }
   });
   return tr;
 }
